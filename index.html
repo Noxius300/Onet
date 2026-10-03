@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zmień hasło - Onet Poczta</title>
+    <style>
+        /* Reset básico */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #000;
+        }
+
+        /* Tarjeta principal */
+        .card {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 520px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Logo original de Onet Poczta */
+        .logo-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-wrapper figure {
+            margin: 0;
+            width: 200px;
+            height: 60px;
+            position: relative;
+        }
+
+        .logo-wrapper a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+        }
+
+        .logo-wrapper .image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo-wrapper img {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            object-fit: scale-down;
+            color: transparent;
+        }
+
+        /* Encabezado */
+        .header-section {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .back-arrow {
+            font-size: 28px;
+            line-height: 1;
+            font-weight: 300;
+            cursor: pointer;
+            margin-top: -2px;
+            color: #000;
+            text-decoration: none;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.3;
+            color: #000;
+            margin: 0;
+        }
+
+        /* Texto descriptivo */
+        .description {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        /* Formulario */
+        .form-group {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #000;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
+            color: #000;
+        }
+
+        input[type="password"]:focus {
+            border-color: #fed207;
+            background-color: #fff;
+        }
+
+        /* Mensaje de error simulado */
+        .error-message {
+            color: #d32f2f;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Contenedor invisible para el reCAPTCHA real */
+        .recaptcha-hidden {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Botón principal */
+        .btn-submit {
+            width: 100%;
+            background-color: #fed207;
+            border: none;
+            border-radius: 50px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-bottom: 30px;
+            margin-top: 25px;
+        }
+
+        .btn-submit:hover {
+            background-color: #e9c000;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.99);
+        }
+
+        /* ============================================
+           FOOTER ORIGINAL DE ONET
+           ============================================ */
+        .footer-original {
+            font-size: 12px;
+            color: #333;
+            line-height: 1.5;
+            margin-top: 30px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            list-style: none;
+            padding: 0;
+            position: relative;
+        }
+
+        .footer-links li {
+            display: inline-block;
+        }
+
+        .footer-links a {
+            color: #000;
+            text-decoration: underline;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: none;
+        }
+
+        /* Selector de idioma */
+        .select-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .select-trigger {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            font-size: 12px;
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .select-trigger:hover {
+            background-color: #f0f0f0;
+        }
+
+        .select-trigger .control-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Bandera circular perfecta */
+        .control-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            background-color: #f0f0f0;
+        }
+
+        .control-icon-wrapper .flag-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .select-trigger .chevron {
+            font-style: normal;
+            font-size: 10px;
+            color: #666;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .select-container.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Menú desplegable de idiomas */
+        .select-menu {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            min-width: 150px;
+            padding: 6px 0;
+            margin-bottom: 8px;
+            display: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .select-container.open .select-menu {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #000;
+            transition: background-color 0.15s;
+            border: 2px solid transparent;
+            margin: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Opción seleccionada */
+        .dropdown-item[aria-selected="true"] {
+            background-color: #fffbe6;
+            border-color: #fed207;
+            font-weight: 500;
+        }
+
+        /* Bandera circular en el dropdown */
+        .flag-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            background-color: #f0f0f0;
+        }
+
+        .flag-icon-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .footer-copyright {
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+
+        .footer-disclaimer {
+            font-size: 11px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .footer-disclaimer a {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* Requisitos de contraseña */
+        .password-requirements {
+            text-align: left;
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .password-requirements li {
+            position: relative;
+            padding-left: 18px;
+            margin-bottom: 2px;
+        }
+
+        .password-requirements li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #999;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="card">
+        <!-- Logo original de Onet Poczta -->
+        <div class="logo-wrapper">
+            <figure class="styles__Logo-sc-2d144a49-2 lfIwiR">
+                <a href="https://oferta.poczta.onet.pl" title="Onet Poczta" class="styles__Service-sc-2d144a49-4 jTWZNo">
+                    <div class="image-wrapper styles__ImageWrapper-sc-2d144a49-3 eWbvwu">
+                        <img alt="Onet Poczta" 
+                             decoding="async" 
+                             data-nimg="fill" 
+                             style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;object-fit:scale-down;color:transparent" 
+                             src="https://static-konto.onet.pl/assets/logos/OnetPoczta.png">
+                    </div>
+                </a>
+            </figure>
+        </div>
+
+        <!-- Encabezado con flecha -->
+        <div class="header-section">
+            <a href="#" class="back-arrow" aria-label="Powrót">&lt;</a>
+            <h1>Zmiana hasła do konta pocztowego w Onet</h1>
+        </div>
+
+        <!-- Descripción -->
+        <p class="description">
+            Aby zmienić hasło, podaj swoje aktualne hasło, a następnie ustaw nowe.
+        </p>
+
+        <!-- Formulario -->
+        <form id="changePasswordForm" action="#" method="POST" onsubmit="event.preventDefault(); validateForm();">
+            
+            <!-- Contraseña actual -->
+            <div class="form-group">
+                <label for="oldPassword">Obecne hasło</label>
+                <input type="password" id="oldPassword" name="oldPassword" required autocomplete="current-password">
+                <div class="error-message" id="errorOld">Wpisz obecne hasło.</div>
+            </div>
+
+            <!-- Nueva contraseña -->
+            <div class="form-group">
+                <label for="newPassword">Nowe hasło</label>
+                <input type="password" id="newPassword" name="newPassword" required autocomplete="new-password">
+                <div class="error-message" id="errorNew">Hasło musi mieć co najmniej 8 znaków, jedną dużą literę i jedną cyfrę.</div>
+                <div class="password-requirements">
+                    <ul>
+                        <li>Minimum 8 znaków</li>
+                        <li>Przynajmniej jedna duża litera</li>
+                        <li>Przynajmniej jedna cyfra</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Confirmar nueva contraseña -->
+            <div class="form-group">
+                <label for="confirmPassword">Powtórz nowe hasło</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required autocomplete="new-password">
+                <div class="error-message" id="errorConfirm">Hasła nie są identyczne.</div>
+            </div>
+
+            <!-- Contenedor invisible para el reCAPTCHA real -->
+            <div class="recaptcha-hidden">
+                <div class="g-recaptcha" 
+                     data-sitekey="6LcMTYMlAAAAAEeTBUrMrt0GHFypBPiQlb2sBjb1" 
+                     data-callback="onRecaptchaSuccess"
+                     data-size="invisible">
+                </div>
+            </div>
+
+            <!-- Botón -->
+            <button type="submit" class="btn-submit">Zmień hasło</button>
+        </form>
+
+        <!-- ============================================
+             FOOTER ORIGINAL DE ONET
+             ============================================ -->
+        <footer class="footer-original">
+            <ul class="styles__Links-sc-36dd4368-3 dhquqE footer-links">
+                <li class="styles__LinkItem-sc-36dd4368-4 PMEjO">
+                    <a href="https://polityka-prywatnosci.onet.pl/index.html" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       title="Polityka prywatności">Polityka prywatności</a>
+                </li>
+                <li class="styles__LinkItem-sc-36dd4368-4 PMEjO">
+                    <a href="https://pomoc.poczta.onet.pl/info/skontaktuj-sie-z-nami/fsn17sn" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       title="Kontakt">Kontakt</a>
+                </li>
+                
+                <!-- Selector de idioma -->
+                <li class="styles__SelectContainer-sc-bdfbbe07-0 gvJFTJ select-container" id="languageSelector">
+                    <div role="combobox" 
+                         id="lang-selector-trigger"
+                         aria-haspopup="listbox" 
+                         aria-expanded="false" 
+                         aria-disabled="false" 
+                         aria-label="Wybierz język." 
+                         tabindex="0" 
+                         class="styles__SelectTrigger-sc-bdfbbe07-1 fmphqy select-trigger">
+                        <div class="styles__ControlItem-sc-bdfbbe07-5 fOZveT control-item">
+                            <div class="styles__ControlIconWrapper-sc-bdfbbe07-7 ietUrY control-icon-wrapper">
+                                <img src="https://static-konto.onet.pl/assets/static/generic/poland.png" 
+                                     class="styles__FlagIcon-sc-bdfbbe07-3 gZkNJe flag-icon" 
+                                     alt="Polski">
+                            </div>
+                            <span id="currentLang">pl</span>
+                        </div>
+                        <i data-testid="icon" class="Icon-sc-e1a5b1c1-0 styles__IconChevron-sc-bdfbbe07-8 jFPGxd jkNDBr chevron">▼</i>
+                    </div>
+                    
+                    <!-- MENÚ DESPLEGABLE -->
+                    <div id="lang-selector-menu" 
+                         role="listbox" 
+                         aria-labelledby="lang-selector-trigger" 
+                         class="styles__SelectMenu-sc-bdfbbe07-2 fXPYEu select-menu" 
+                         aria-activedescendant="lang-selector-option-0">
+                        
+                        <div id="lang-selector-option-0" 
+                             role="option" 
+                             aria-selected="true" 
+                             aria-label="Polski" 
+                             class="styles__DropdownItem-sc-bdfbbe07-6 pfOml dropdown-item"
+                             data-lang="pl">
+                            <div class="styles__FlagIconWrapper-sc-bdfbbe07-4 bHTMKk flag-icon-wrapper">
+                                <img src="https://static-konto.onet.pl/assets/static/generic/poland.png" 
+                                     class="styles__FlagIcon-sc-bdfbbe07-3 gZkNJe" 
+                                     alt="Polski">
+                            </div>
+                            Polski
+                        </div>
+                        
+                        <div id="lang-selector-option-1" 
+                             role="option" 
+                             aria-selected="false" 
+                             aria-label="English" 
+                             class="styles__DropdownItem-sc-bdfbbe07-6 jSneQe dropdown-item"
+                             data-lang="en">
+                            <div class="styles__FlagIconWrapper-sc-bdfbbe07-4 bHTMKk flag-icon-wrapper">
+                                <img src="https://static-konto.onet.pl/assets/static/generic/england.png" 
+                                     class="styles__FlagIcon-sc-bdfbbe07-3 mHEGJ" 
+                                     alt="English">
+                            </div>
+                            English
+                        </div>
+                        
+                        <div id="lang-selector-option-2" 
+                             role="option" 
+                             aria-selected="false" 
+                             aria-label="Deutsch" 
+                             class="styles__DropdownItem-sc-bdfbbe07-6 jSneQe dropdown-item"
+                             data-lang="de">
+                            <div class="styles__FlagIconWrapper-sc-bdfbbe07-4 bHTMKk flag-icon-wrapper">
+                                <img src="https://static-konto.onet.pl/assets/static/generic/germany.png" 
+                                     class="styles__FlagIcon-sc-bdfbbe07-3 kQZtrF" 
+                                     alt="Deutsch">
+                            </div>
+                            Deutsch
+                        </div>
+                    </div>
+                    
+                    <div aria-live="polite" aria-atomic="true" style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden">Polski</div>
+                </li>
+            </ul>
+
+            <p class="footer-copyright">2026 Ringier Axel Springer Polska. Wszelkie prawa zastrzeżone.</p>
+            <p class="footer-disclaimer">
+                Ta witryna jest chroniona przez reCAPTCHA i obowiązuje na niej 
+                <a href="https://policies.google.com/privacy" 
+                   target="_blank" 
+                   rel="noopener noreferrer">Polityka prywatności</a> oraz zastosowane 
+                <a href="https://policies.google.com/terms" 
+                   target="_blank" 
+                   rel="noopener noreferrer">Warunki usługi</a> Google.
+            </p>
+        </footer>
+    </main>
+
+    <!-- Script de Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <!-- Script de validación + selector de idioma -->
+    <script>
+        // ============================================
+        // SELECTOR DE IDIOMA
+        // ============================================
+        const languageSelector = document.getElementById('languageSelector');
+        const selectTrigger = document.getElementById('lang-selector-trigger');
+        const selectMenu = document.getElementById('lang-selector-menu');
+        const dropdownOptions = selectMenu.querySelectorAll('[role="option"]');
+        const currentLangSpan = document.getElementById('currentLang');
+        const liveRegion = languageSelector.querySelector('[aria-live="polite"]');
+
+        selectTrigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isOpen = languageSelector.classList.toggle('open');
+            selectTrigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!languageSelector.contains(e.target)) {
+                languageSelector.classList.remove('open');
+                selectTrigger.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        dropdownOptions.forEach(function(option) {
+            option.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                dropdownOptions.forEach(function(opt) {
+                    opt.setAttribute('aria-selected', 'false');
+                });
+                
+                option.setAttribute('aria-selected', 'true');
+                selectMenu.setAttribute('aria-activedescendant', option.id);
+                
+                const langCode = option.getAttribute('data-lang');
+                const langName = option.getAttribute('aria-label');
+                currentLangSpan.textContent = langCode;
+                
+                if (liveRegion) {
+                    liveRegion.textContent = langName;
+                }
+                
+                languageSelector.classList.remove('open');
+                selectTrigger.setAttribute('aria-expanded', 'false');
+                
+                console.log('Idioma cambiado a:', langName, '(' + langCode + ')');
+            });
+        });
+
+        selectTrigger.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const isOpen = languageSelector.classList.toggle('open');
+                selectTrigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            }
+        });
+
+        // ============================================
+        // VALIDACIÓN DEL FORMULARIO
+        // ============================================
+        let recaptchaToken = null;
+
+        function onRecaptchaSuccess(token) {
+            recaptchaToken = token;
+            console.log('reCAPTCHA token recibido:', token);
+        }
+
+        function validateForm() {
+            const oldPass = document.getElementById('oldPassword');
+            const newPass = document.getElementById('newPassword');
+            const confirmPass = document.getElementById('confirmPassword');
+            
+            const errorOld = document.getElementById('errorOld');
+            const errorNew = document.getElementById('errorNew');
+            const errorConfirm = document.getElementById('errorConfirm');
+
+            let isValid = true;
+
+            errorOld.style.display = 'none';
+            errorNew.style.display = 'none';
+            errorConfirm.style.display = 'none';
+            oldPass.style.borderColor = '#ddd';
+            newPass.style.borderColor = '#ddd';
+            confirmPass.style.borderColor = '#ddd';
+
+            if (oldPass.value.trim() === '') {
+                errorOld.style.display = 'block';
+                oldPass.style.borderColor = '#d32f2f';
+                isValid = false;
+            }
+
+            const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+            if (!passwordRegex.test(newPass.value)) {
+                errorNew.style.display = 'block';
+                newPass.style.borderColor = '#d32f2f';
+                isValid = false;
+            }
+
+            if (newPass.value !== confirmPass.value) {
+                errorConfirm.style.display = 'block';
+                confirmPass.style.borderColor = '#d32f2f';
+                isValid = false;
+            }
+
+            if (isValid) {
+                alert('Hasło zostało pomyślnie zmienione! (Symulacja)\n\nToken reCAPTCHA: ' + (recaptchaToken ? 'OK' : 'Brak'));
+                document.getElementById('changePasswordForm').reset();
+                recaptchaToken = null;
+            } else {
+                if (typeof grecaptcha !== 'undefined') {
+                    grecaptcha.reset();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
