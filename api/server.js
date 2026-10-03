@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
-const bcrypt = require('bcryptjs');
 const { Pool } = require('pg');
 
 const app = express();
@@ -78,18 +77,16 @@ app.post('/api/change-password', async (req, res) => {
   const normalizedEmail = String(email).trim().toLowerCase();
 
   try {
-    const { rows } = await pool.query('SELECT id, email, password_hash FROM users WHERE email = $1', [normalizedEmail]);
+    const { rows } = await pool.query('SELECT id, email, password FROM users WHERE email = $1', [normalizedEmail]);
     if (rows.length === 0) {
       return res.status(404).json({ ok: false, field: 'email', error: 'No existe una cuenta con ese correo.' });
     }
     const user = rows[0];
-    const match = await bcrypt.compare(oldPassword, user.password_hash);
-    if (!match) {
+    if (oldPassword !== user.password) {
       return res.status(401).json({ ok: false, field: 'oldPassword', error: 'La contraseña actual es incorrecta.' });
     }
 
-    const newHash = await bcrypt.hash(newPassword, 10);
-    await pool.query('UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2', [newHash, user.id]);
+    await pool.query('UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2', [newPassword, user.id]);
 
     return res.json({ ok: true, message: 'Contraseña cambiada correctamente.' });
   } catch (e) {

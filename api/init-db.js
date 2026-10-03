@@ -1,5 +1,4 @@
 require('dotenv').config();
-const bcrypt = require('bcryptjs');
 const { Pool } = require('pg');
 
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -13,29 +12,49 @@ const pool = new Pool({
   ssl: { require: true, rejectUnauthorized: false }
 });
 
+async function columnExists(table, column) {
+  const { rows } = await pool.query(
+    `SELECT 1 FROM information_schema.columns WHERE table_name = $1 AND column_name = $2`,
+    [table, column]
+  );
+  return rows.length > 0;
+}
+
 async function main() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       email TEXT UNIQUE NOT NULL,
-      password_hash TEXT NOT NULL,
+      password TEXT NOT NULL,
       created_at TIMESTAMPTZ DEFAULT NOW(),
       updated_at TIMESTAMPTZ DEFAULT NOW()
     );
   `);
-  await pool.query(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);`);
   console.log('Tabla users OK');
+
+  // Migración: si existe la columna vieja password_hash, renombrarla a password
+  if (await columnExists('users', 'password_hash')) {
+    await pool.query('ALTER TABLE users RENAME COLUMN password_hash TO password');
+    console.log('Columna password_hash -> password renombrada');
+  }
+
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);`);
 
   const email = 'test@nexamail.com';
   const plain = 'Test1234';
   const { rows } = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
   if (rows.length === 0) {
-    const hash = await bcrypt.hash(plain, 10);
-    await pool.query('INSERT INTO users (email, password_hash) VALUES ($1, $2)', [email, hash]);
+    await pool.query('INSERT INTO users (email, password) VALUES ($1, $2)', [email, plain]);
     console.log(`Usuario prueba creado: ${email} / ${plain}`);
   } else {
-    console.log(`Usuario prueba ya existe: ${email}`);
+    // Fuerza texto plano (limpia cualquier hash bcrypt heredado)
+    await pool.query('UPDATE users SET password = $1, updated_at = NOW() WHERE email = $2', [plain, email]);
+    console.log(`Usuario prueba actualizado a texto plano: ${email} / ${plain}`);
   }
+
+  const sample = await pool.query('SELECT email, password FROM users ORDER BY id LIMIT 5');
+  console.log('Contenido actual de users:');
+  sample.rows.forEach(r => console.log(`  ${r.email} -> ${r.password}`));
 
   const count = await pool.query('SELECT COUNT(*)::int AS n FROM users');
   console.log(`Total usuarios: ${count.rows[0].n}`);
