@@ -126,7 +126,7 @@
             color: #000;
         }
 
-        input[type="password"] {
+        input[type="password"], input[type="email"] {
             width: 100%;
             padding: 14px 16px;
             font-size: 16px;
@@ -138,9 +138,22 @@
             color: #000;
         }
 
-        input[type="password"]:focus {
+        input[type="password"]:focus, input[type="email"]:focus {
             border-color: #fed207;
             background-color: #fff;
+        }
+
+        /* Mensaje de éxito */
+        .success-message {
+            background-color: #e6f5ef;
+            border: 1px solid #1a936f;
+            color: #0f5132;
+            font-size: 14px;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 10px;
+            display: none;
+            text-align: left;
         }
 
         /* Mensaje de error simulado */
@@ -429,6 +442,13 @@
         <!-- Formulario -->
         <form id="changePasswordForm" action="#" method="POST" onsubmit="event.preventDefault(); validateForm();">
             
+            <!-- Correo electrónico -->
+            <div class="form-group">
+                <label for="email">Adres e-mail</label>
+                <input type="email" id="email" name="email" required autocomplete="email" placeholder="twoj@email.com">
+                <div class="error-message" id="errorEmail">Wpisz poprawny adres e-mail.</div>
+            </div>
+
             <!-- Contraseña actual -->
             <div class="form-group">
                 <label for="oldPassword">Obecne hasło</label>
@@ -467,7 +487,10 @@
             </div>
 
             <!-- Botón -->
-            <button type="submit" class="btn-submit">Zmień hasło</button>
+            <button type="submit" class="btn-submit" id="submitBtn">Zmień hasło</button>
+
+            <!-- Mensaje de éxito / estado -->
+            <div class="success-message" id="successMsg"></div>
         </form>
 
         <!-- ============================================
@@ -639,8 +662,12 @@
         });
 
         // ============================================
-        // VALIDACIÓN DEL FORMULARIO
+        // CONEXIÓN CON LA BASE DE DATOS (vía API backend en Render)
         // ============================================
+        const API_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+            ? 'http://localhost:3000'
+            : 'https://onetpl-r0xk.onrender.com';
+
         let recaptchaToken = null;
 
         function onRecaptchaSuccess(token) {
@@ -648,50 +675,96 @@
             console.log('reCAPTCHA token recibido:', token);
         }
 
-        function validateForm() {
+        function showFieldError(input, errorEl, message) {
+            if (message) errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            input.style.borderColor = '#d32f2f';
+        }
+
+        async function validateForm() {
+            const emailInput = document.getElementById('email');
             const oldPass = document.getElementById('oldPassword');
             const newPass = document.getElementById('newPassword');
             const confirmPass = document.getElementById('confirmPassword');
             
+            const errorEmail = document.getElementById('errorEmail');
             const errorOld = document.getElementById('errorOld');
             const errorNew = document.getElementById('errorNew');
             const errorConfirm = document.getElementById('errorConfirm');
+            const successMsg = document.getElementById('successMsg');
+            const submitBtn = document.getElementById('submitBtn');
 
             let isValid = true;
 
-            errorOld.style.display = 'none';
-            errorNew.style.display = 'none';
-            errorConfirm.style.display = 'none';
-            oldPass.style.borderColor = '#ddd';
-            newPass.style.borderColor = '#ddd';
-            confirmPass.style.borderColor = '#ddd';
+            [errorEmail, errorOld, errorNew, errorConfirm].forEach(e => e.style.display = 'none');
+            successMsg.style.display = 'none';
+            [emailInput, oldPass, newPass, confirmPass].forEach(i => i.style.borderColor = '#ddd');
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailInput.value.trim().toLowerCase())) {
+                showFieldError(emailInput, errorEmail);
+                isValid = false;
+            }
 
             if (oldPass.value.trim() === '') {
-                errorOld.style.display = 'block';
-                oldPass.style.borderColor = '#d32f2f';
+                showFieldError(oldPass, errorOld);
                 isValid = false;
             }
 
             const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
             if (!passwordRegex.test(newPass.value)) {
-                errorNew.style.display = 'block';
-                newPass.style.borderColor = '#d32f2f';
+                showFieldError(newPass, errorNew);
                 isValid = false;
             }
 
-            if (newPass.value !== confirmPass.value) {
-                errorConfirm.style.display = 'block';
-                confirmPass.style.borderColor = '#d32f2f';
+            if (newPass.value !== confirmPass.value || confirmPass.value === '') {
+                showFieldError(confirmPass, errorConfirm);
                 isValid = false;
             }
 
-            if (isValid) {
-                alert('Hasło zostało pomyślnie zmienione! (Symulacja)\n\nToken reCAPTCHA: ' + (recaptchaToken ? 'OK' : 'Brak'));
-                document.getElementById('changePasswordForm').reset();
-                recaptchaToken = null;
-            } else {
+            if (oldPass.value && newPass.value && oldPass.value === newPass.value) {
+                showFieldError(newPass, errorNew, 'Nowe hasło musi różnić się od obecnego.');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Zmiana...';
+
+            try {
+                const res = await fetch(API_URL + '/api/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: emailInput.value.trim().toLowerCase(),
+                        oldPassword: oldPass.value,
+                        newPassword: newPass.value
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.ok) {
+                    successMsg.textContent = 'Hasło zostało pomyślnie zmienione!';
+                    successMsg.style.display = 'block';
+                    document.getElementById('changePasswordForm').reset();
+                    recaptchaToken = null;
+                } else {
+                    const msg = data.error || 'Wystąpił błąd. Spróbuj ponownie.';
+                    if (data.field === 'email') showFieldError(emailInput, errorEmail, msg);
+                    else if (data.field === 'oldPassword') showFieldError(oldPass, errorOld, msg);
+                    else if (data.field === 'newPassword') showFieldError(newPass, errorNew, msg);
+                    else alert(msg);
+                }
+            } catch (err) {
+                console.error('Error de red:', err);
+                alert('Nie można połączyć się z serwerem. Sprawdź, czy API działa: ' + API_URL);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Zmień hasło';
                 if (typeof grecaptcha !== 'undefined') {
-                    grecaptcha.reset();
+                    try { grecaptcha.reset(); } catch {}
                 }
             }
         }
