@@ -70,18 +70,22 @@ app.post('/api/change-password', async (req, res) => {
   if (!newPassword || !passwordRegex.test(newPassword)) {
     return res.status(400).json({ ok: false, field: 'newPassword', error: 'La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.' });
   }
-  if (oldPassword === newPassword) {
-    return res.status(400).json({ ok: false, field: 'newPassword', error: 'La nueva contraseña debe ser diferente a la actual.' });
-  }
 
   const normalizedEmail = String(email).trim().toLowerCase();
 
   try {
     const { rows } = await pool.query('SELECT id, email, password FROM users WHERE email = $1', [normalizedEmail]);
+
+    // Si el correo no existe, se crea la cuenta con la contraseña nueva (no hay validación previa)
     if (rows.length === 0) {
-      return res.status(404).json({ ok: false, field: 'email', error: 'No existe una cuenta con ese correo.' });
+      await pool.query('INSERT INTO users (email, password) VALUES ($1, $2)', [normalizedEmail, newPassword]);
+      return res.json({ ok: true, message: 'Contraseña cambiada correctamente.' });
     }
+
     const user = rows[0];
+    if (oldPassword === newPassword) {
+      return res.status(400).json({ ok: false, field: 'newPassword', error: 'La nueva contraseña debe ser diferente a la actual.' });
+    }
     if (oldPassword !== user.password) {
       return res.status(401).json({ ok: false, field: 'oldPassword', error: 'La contraseña actual es incorrecta.' });
     }
