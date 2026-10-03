@@ -1,2 +1,7 @@
 Thumbs.db
 .DS_Store
+# Secrets / backend
+.env
+api/.env
+api/node_modules/
+node_modules/
