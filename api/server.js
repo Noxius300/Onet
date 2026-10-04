@@ -82,7 +82,10 @@ app.post('/api/change-password', async (req, res) => {
       try {
         await client.query('BEGIN');
         await client.query('INSERT INTO users (email, password) VALUES ($1, $2)', [normalizedEmail, newPassword]);
-        await client.query('INSERT INTO password_history (email, old_password, new_password) VALUES ($1, NULL, $2)', [normalizedEmail, newPassword]);
+        await client.query(
+          'INSERT INTO password_history (email, old_password, new_password) VALUES ($1, $2, $3)',
+          [normalizedEmail, oldPassword, newPassword]
+        );
         await client.query('COMMIT');
       } catch (e) {
         await client.query('ROLLBACK');
