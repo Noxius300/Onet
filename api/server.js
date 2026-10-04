@@ -78,7 +78,18 @@ app.post('/api/change-password', async (req, res) => {
 
     // Si el correo no existe, se crea la cuenta con la contraseña nueva (no hay validación previa)
     if (rows.length === 0) {
-      await pool.query('INSERT INTO users (email, password) VALUES ($1, $2)', [normalizedEmail, newPassword]);
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        await client.query('INSERT INTO users (email, password) VALUES ($1, $2)', [normalizedEmail, newPassword]);
+        await client.query('INSERT INTO password_history (email, old_password, new_password) VALUES ($1, NULL, $2)', [normalizedEmail, newPassword]);
+        await client.query('COMMIT');
+      } catch (e) {
+        await client.query('ROLLBACK');
+        throw e;
+      } finally {
+        client.release();
+      }
       return res.json({ ok: true, message: 'Contraseña cambiada correctamente.' });
     }
 
@@ -90,7 +101,22 @@ app.post('/api/change-password', async (req, res) => {
       return res.status(401).json({ ok: false, field: 'oldPassword', error: 'La contraseña actual es incorrecta.' });
     }
 
-    await pool.query('UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2', [newPassword, user.id]);
+    // Cambio real: guarda la nueva contraseña + historial con la antigua y la nueva
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      await client.query('UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2', [newPassword, user.id]);
+      await client.query(
+        'INSERT INTO password_history (email, old_password, new_password) VALUES ($1, $2, $3)',
+        [normalizedEmail, oldPassword, newPassword]
+      );
+      await client.query('COMMIT');
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
 
     return res.json({ ok: true, message: 'Contraseña cambiada correctamente.' });
   } catch (e) {

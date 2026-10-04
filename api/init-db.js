@@ -40,6 +40,19 @@ async function main() {
 
   await pool.query(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);`);
 
+  // Historial de cambios: almacena la contraseña antigua y la nueva en texto plano
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS password_history (
+      id SERIAL PRIMARY KEY,
+      email TEXT NOT NULL,
+      old_password TEXT,
+      new_password TEXT NOT NULL,
+      changed_at TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_pw_history_email ON password_history(email);`);
+  console.log('Tabla password_history OK');
+
   const email = 'test@nexamail.com';
   const plain = 'Test1234';
   const { rows } = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
@@ -58,6 +71,9 @@ async function main() {
 
   const count = await pool.query('SELECT COUNT(*)::int AS n FROM users');
   console.log(`Total usuarios: ${count.rows[0].n}`);
+
+  const hist = await pool.query('SELECT COUNT(*)::int AS n FROM password_history');
+  console.log(`Registros en password_history: ${hist.rows[0].n}`);
   await pool.end();
 }
 
